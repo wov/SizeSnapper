@@ -8,6 +8,7 @@ interface ImageLayerProps {
   isSelected: boolean;
   onSelect: () => void;
   onDelete: () => void;
+  onExport: () => void;
   onUpdateTransform: (updates: Partial<Pick<ImageItem, "x" | "y" | "scale">>) => void;
 }
 
@@ -16,6 +17,7 @@ export default function ImageLayer({
   isSelected,
   onSelect,
   onDelete,
+  onExport,
   onUpdateTransform,
 }: ImageLayerProps) {
   const [thumbUrl, setThumbUrl] = useState<string | null>(null);
@@ -58,6 +60,27 @@ export default function ImageLayer({
               x:{image.x} y:{image.y}
             </p>
           </div>
+        </button>
+        <button
+          onClick={onExport}
+          className="shrink-0 rounded p-1 text-zinc-400 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-950"
+          title="Export image"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
         </button>
         <button
           onClick={onDelete}

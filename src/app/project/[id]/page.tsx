@@ -2,8 +2,9 @@
 
 import { use, useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getProject, type Project } from "@/lib/db";
+import { getProject, type ImageItem, type Project } from "@/lib/db";
 import { useImages } from "@/hooks/useImages";
+import { renderImageToCanvas } from "@/lib/canvas";
 import CanvasEditor from "@/components/CanvasEditor";
 import ImageLayer from "@/components/ImageLayer";
 import ExportButton from "@/components/ExportButton";
@@ -38,6 +39,25 @@ export default function ProjectPage({
       e.target.value = "";
     },
     [addImages]
+  );
+
+  const handleExportSingle = useCallback(
+    async (image: ImageItem) => {
+      if (!project) return;
+      const blob = await renderImageToCanvas(
+        project.canvasWidth,
+        project.canvasHeight,
+        image
+      );
+      const name = image.fileName.replace(/\.[^.]+$/, "") + ".png";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    [project]
   );
 
   const handleUpdateTransform = useCallback(
@@ -162,6 +182,7 @@ export default function ProjectPage({
                     image={image}
                     isSelected={selectedId === image.id}
                     onSelect={() => setSelectedId(image.id)}
+                    onExport={() => handleExportSingle(image)}
                     onDelete={() => {
                       if (selectedId === image.id) setSelectedId(null);
                       removeImage(image.id);
